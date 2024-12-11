@@ -19,6 +19,6 @@ import voucherRoutes from "./routes/vouchers.routes.js";
 app.use("/api/auth",adminRoutes);
 app.use("/api/items",itemRoutes);
 app.use("/api/customer",customerRoutes);
-app.use("/api/voucher",voucherRoutes);
+app.use("/api/customer/voucher",voucherRoutes);
 
 export default app;

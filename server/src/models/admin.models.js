@@ -13,6 +13,9 @@ const adminSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true
+        },
+        customerCount:{
+            type: Number
         }
     },
     {

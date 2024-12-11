@@ -9,12 +9,27 @@ const Customer = () => {
     amountBalance: "",
     amountPaid: "",
     place: "",
+    index: undefined, // To track editing
   });
 
   const [customers, setCustomers] = useState([]);
 
   // Modal Toggle
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+    if (!isModalOpen) {
+      // Reset form when opening the modal
+      setFormFields({
+        customerName: "",
+        shopName: "",
+        GSTNumber: "",
+        amountBalance: "",
+        amountPaid: "",
+        place: "",
+        index: undefined,
+      });
+    }
+  };
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -25,7 +40,15 @@ const Customer = () => {
   // Handle Form Submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    setCustomers([...customers, { ...formFields, vouchers: [] }]);
+    if (formFields.index !== undefined) {
+      // Editing existing customer
+      const updatedCustomers = [...customers];
+      updatedCustomers[formFields.index] = { ...formFields, index: undefined, vouchers: [] };
+      setCustomers(updatedCustomers);
+    } else {
+      // Adding new customer
+      setCustomers([...customers, { ...formFields, vouchers: [] }]);
+    }
     setFormFields({
       customerName: "",
       shopName: "",
@@ -33,6 +56,7 @@ const Customer = () => {
       amountBalance: "",
       amountPaid: "",
       place: "",
+      index: undefined,
     });
     toggleModal();
   };
@@ -41,6 +65,13 @@ const Customer = () => {
   const handleDelete = (index) => {
     const updatedCustomers = customers.filter((_, i) => i !== index);
     setCustomers(updatedCustomers);
+  };
+
+  // Edit Customer
+  const handleEdit = (index) => {
+    const customerToEdit = { ...customers[index], index }; // Include index for editing
+    setFormFields(customerToEdit);
+    setIsModalOpen(true);
   };
 
   return (
@@ -85,13 +116,12 @@ const Customer = () => {
                 <td className="border border-gray-300 px-4 py-2 flex space-x-2">
                   <button
                     className="px-3 py-1 text-sm text-white rounded bg-blue-500"
-                    onClick={() => alert(`Edit ${customer.customerName}`)}
+                    onClick={() => handleEdit(index)}
                   >
                     Edit
                   </button>
                   <button
                     className="px-3 py-1 text-sm text-white rounded bg-green-500"
-                    onClick={() => alert(`Vouchers for ${customer.customerName}`)}
                   >
                     Vouchers
                   </button>
@@ -118,7 +148,7 @@ const Customer = () => {
               className="text-xl font-semibold mb-4"
               style={{ color: "#4E45E5" }}
             >
-              Add New Customer
+              {formFields.index !== undefined ? "Edit Customer" : "Add New Customer"}
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -194,17 +224,17 @@ const Customer = () => {
               <div className="flex justify-end">
                 <button
                   type="button"
+                  className="px-4 py-2 mr-2 text-white rounded-md bg-gray-500"
                   onClick={toggleModal}
-                  className="px-4 py-2 mr-2 text-sm text-gray-600 rounded-md border"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm text-white rounded-md"
+                  className="px-4 py-2 text-white rounded-md"
                   style={{ backgroundColor: "#4E45E5" }}
                 >
-                  Save
+                  {formFields.index !== undefined ? "Update" : "Add"} Customer
                 </button>
               </div>
             </form>
@@ -216,3 +246,4 @@ const Customer = () => {
 };
 
 export default Customer;
+

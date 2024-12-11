@@ -25,8 +25,15 @@ export const createVoucher = async (req,res) => {
 }
 
 export const getVouchers = async(req,res) =>{
+    // get the customer id
+    // then fetch from populate function
     try {
+        const { customerId } = req.params;
         
+        const customerVoucherList = await Customer.findById({_id:customerId}).select("vouchers").populate("vouchers");
+        console.log(customerVoucherList);
+
+        res.status(200).json({success: true, message: "Voucher List", customerVoucherList});
     } catch (error) {
         console.log("Error ",error);
     }

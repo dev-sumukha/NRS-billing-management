@@ -1,9 +1,10 @@
 import express from "express";
 const router = express.Router();
 
-import { createCustomer, deleteCustomer } from "../controllers/customers.controllers.js";
+import { createCustomer, deleteCustomer, updateCustomer } from "../controllers/customers.controllers.js";
 
 router.post("/createCustomer",createCustomer);
-router.delete("/deleteCustomer",deleteCustomer);
+router.put("/updateCustomer/:cid",updateCustomer);
+router.delete("/deleteCustomer/:cid",deleteCustomer);
 
 export default router;

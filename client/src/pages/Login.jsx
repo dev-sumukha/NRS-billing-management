@@ -1,6 +1,42 @@
-import React from "react";
+import axios from "axios";
+import React, { useContext, useState } from 'react'
+import userContext from "../store/UserContext"
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const [user, setUser] = useState({
+    email: '',
+    password: ''
+  })
+
+  const navigate = useNavigate()
+  const { storeTokenInLS } = useContext(userContext)
+
+  function handleInput(e) {
+    let name = e.target.name
+    let value = e.target.value
+
+    setUser({
+      ...user,
+      [name]: value
+    })
+    console.log(user);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    
+    try {
+      const res = await axios.post('http://localhost:3000/api/auth/login', user)
+      if (res) {
+        storeTokenInLS(res.data.token)  // Assuming your backend returns a token
+        navigate('/pass')  // Redirect after successful login
+      }
+    } catch (error) {
+      alert('Something went wrong')
+    }
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       {/* Login Card */}
@@ -13,7 +49,7 @@ const Login = () => {
         </div>
 
         {/* Login Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Email Field */}
           <div>
             <label
@@ -25,9 +61,12 @@ const Login = () => {
             <input
               type="email"
               id="email"
+              name="email"
               placeholder="you@example.com"
+              value={user.email}
               className="w-full px-4 py-2 mt-1 text-gray-700 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               style={{ borderColor: "#4E45E5" }}
+              onChange={handleInput}
               required
             />
           </div>
@@ -43,11 +82,13 @@ const Login = () => {
             <input
               type="password"
               id="password"
-              placeholder="••••••••••"
               name="password"
+              placeholder="••••••••••"
+              value={user.password}
               className="w-full px-4 py-2 mt-1 text-gray-700 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               style={{ borderColor: "#4E45E5" }}
               autoComplete="off"
+              onChange={handleInput}
               required
             />
           </div>
@@ -61,6 +102,7 @@ const Login = () => {
             Login
           </button>
         </form>
+        
         {/* Footer */}
         <div className="mt-6 text-sm text-center text-gray-400">
           Developed with ❤️ by Sumukha Sureban.

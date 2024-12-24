@@ -17,7 +17,8 @@ export const adminRegister = async (req,res) => {
 
 export const adminLogin = async (req,res) => {
     const { email, password } = req.body;
-
+    console.log(email, password);
+    
     try {
         const isAdminExist = await Admin.findOne({email});
 
